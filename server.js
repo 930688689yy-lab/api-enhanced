@@ -188,6 +188,16 @@ function createConsoleSpinner(message = '启动中') {
  */
 async function constructServer(moduleDefs) {
   const app = express()
+  const API_TOKEN = process.env.API_TOKEN
+if (API_TOKEN) {
+  app.use((req, res, next) => {
+    const reqToken = req.query.token
+    if (reqToken !== API_TOKEN) {
+      return res.status(403).json({msg:"token错误，禁止访问"})
+    }
+    next()
+  })
+}
   const { CORS_ALLOW_ORIGIN } = process.env
   const allowOrigins = parseCorsAllowOrigins(CORS_ALLOW_ORIGIN)
   app.set('trust proxy', true)
